@@ -50,10 +50,29 @@ window.executeNotation = executeNotation;
 
 window.scrambleCube = async function() {
     if (!currentSessionId) return;
-    const moves = ["R", "U", "F", "B", "L", "D", "R'", "U'", "F'", "B'", "L'", "D'", "R2", "U2", "F2", "B2", "L2", "D2"];
+    
+    const faces = ['U', 'D', 'F', 'B', 'L', 'R'];
+    const modifiers = ['', "'", '2'];
+    const opposites = { 'U':'D', 'D':'U', 'F':'B', 'B':'F', 'L':'R', 'R':'L' };
+    
     let scramble = [];
+    let prevFace = '';
+    let prevPrevFace = '';
+    
     for(let i=0; i<20; i++) {
-        scramble.push(moves[Math.floor(Math.random() * moves.length)]);
+        let face;
+        while (true) {
+            face = faces[Math.floor(Math.random() * faces.length)];
+            // Prevent same face twice in a row (e.g. F F2)
+            if (face === prevFace) continue;
+            // Prevent same face separated by its opposite (e.g. R L R2)
+            if (face === prevPrevFace && opposites[face] === prevFace) continue;
+            break;
+        }
+        let mod = modifiers[Math.floor(Math.random() * modifiers.length)];
+        scramble.push(face + mod);
+        prevPrevFace = prevFace;
+        prevFace = face;
     }
     
     try {
