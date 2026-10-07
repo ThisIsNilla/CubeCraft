@@ -8,7 +8,7 @@ const FACE_COLORS = {
   INTERNAL: 0x222222 // Dark grey for inside
 };
 
-let scene, camera, renderer, cubeGroup;
+let scene, camera, renderer, cubeGroup, controls;
 let cubies = {}; // Maps 'x,y,z' to the THREE.Mesh
 
 function init3DCube() {
@@ -24,6 +24,16 @@ function init3DCube() {
   renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(container.clientWidth, container.clientHeight);
   container.appendChild(renderer.domElement);
+
+  // OrbitControls for mouse interaction
+  if (THREE.OrbitControls) {
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.enablePan = false;
+      controls.minDistance = 3;
+      controls.maxDistance = 15;
+  }
 
   // Lighting
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
@@ -41,9 +51,7 @@ function init3DCube() {
   function animate() {
     requestAnimationFrame(animate);
     
-    // Slow idle rotation
-    cubeGroup.rotation.y += 0.005;
-    cubeGroup.rotation.x += 0.002;
+    if (controls) controls.update(); // smoothly updates damping
 
     renderer.render(scene, camera);
   }
@@ -89,13 +97,21 @@ function createInitialCube() {
 }
 
 window.resetCubeRotation = function() {
-    if (cubeGroup) {
-        cubeGroup.rotation.set(0, 0, 0);
+    if (controls) {
+        controls.reset();
+    }
+    if (camera) {
+        camera.position.set(5, 5, 6);
+        camera.lookAt(0, 0, 0);
     }
 };
 
 window.updateCubeColors = function(faceletString) {
-    if (!faceletString || faceletString.length !== 54) return;
+    console.log("updateCubeColors called with string:", faceletString);
+    if (!faceletString || faceletString.length !== 54) {
+        console.error("Invalid facelet string length:", faceletString);
+        return;
+    }
 
     // Facelet Mapping definition
     const FACELET_MAP = [
@@ -125,15 +141,20 @@ window.updateCubeColors = function(faceletString) {
         {p:[1,-1,-1], f:5}, {p:[0,-1,-1], f:5}, {p:[-1,-1,-1], f:5},
     ];
 
-    for (let i = 0; i < 54; i++) {
-        const mapping = FACELET_MAP[i];
-        const key = `${mapping.p[0]},${mapping.p[1]},${mapping.p[2]}`;
-        const char = faceletString[i];
-        
-        const mesh = cubies[key];
-        if (mesh && FACE_COLORS[char] !== undefined) {
-            mesh.material[mapping.f].color.setHex(FACE_COLORS[char]);
+    try {
+        for (let i = 0; i < 54; i++) {
+            const mapping = FACELET_MAP[i];
+            const key = `${mapping.p[0]},${mapping.p[1]},${mapping.p[2]}`;
+            const char = faceletString[i];
+            
+            const mesh = cubies[key];
+            if (mesh && FACE_COLORS[char] !== undefined) {
+                mesh.material[mapping.f].color.setHex(FACE_COLORS[char]);
+            }
         }
+        console.log("Successfully updated colors.");
+    } catch (e) {
+        console.error("Error updating colors:", e);
     }
 };
 

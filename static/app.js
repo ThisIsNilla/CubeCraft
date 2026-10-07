@@ -3,6 +3,7 @@ let currentSessionId = null;
 async function initSession() {
     try {
         const activeMethod = localStorage.getItem('activeMethod') || 'cfop';
+        console.log("Initializing session with method:", activeMethod);
         
         const response = await fetch('/api/sessions', { 
             method: 'POST',
@@ -11,6 +12,7 @@ async function initSession() {
         });
         const data = await response.json();
         currentSessionId = data.session_id;
+        console.log("Session initialized. ID:", currentSessionId);
         updateUI(data);
     } catch (error) {
         console.error("Failed to init session", error);
@@ -55,16 +57,24 @@ window.scrambleCube = async function() {
     }
     
     try {
+        const sequence = scramble.join(" ");
         const response = await fetch(`/api/sessions/${currentSessionId}/moves`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ sequence: scramble.join(" ") })
+            body: JSON.stringify({ sequence: sequence })
         });
         const data = await response.json();
         updateUI(data);
         
         const badge = document.getElementById("lastExecutedMove");
         if (badge) badge.innerText = "SCRAMBLED";
+
+        const scrambleContainer = document.getElementById("scrambleDisplayContainer");
+        const scrambleString = document.getElementById("scrambleDisplayString");
+        if (scrambleContainer && scrambleString) {
+            scrambleContainer.classList.remove("hidden");
+            scrambleString.innerText = sequence;
+        }
     } catch (error) {
         console.error("Failed to scramble", error);
     }
