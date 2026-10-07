@@ -159,3 +159,85 @@ window.updateCubeColors = function(faceletString) {
 };
 
 window.addEventListener('DOMContentLoaded', init3DCube);
+
+let isAnimating = false;
+
+window.animateCubeMove = function(moveSequence, targetFaceletString) {
+    if (!moveSequence || isAnimating) {
+        window.updateCubeColors(targetFaceletString);
+        return;
+    }
+
+    const moves = moveSequence.trim().split(/\s+/);
+    if (moves.length > 1) {
+        // For long sequences (scrambles), just snap instantly
+        window.updateCubeColors(targetFaceletString);
+        return;
+    }
+
+    const move = moves[0];
+    const face = move[0];
+    const modifier = move[1] || '';
+
+    let axis, condition, dir = 1;
+    if (face === 'R') { axis = 'x'; condition = (p) => p.x > 0.5; dir = -1; }
+    else if (face === 'L') { axis = 'x'; condition = (p) => p.x < -0.5; dir = 1; }
+    else if (face === 'U') { axis = 'y'; condition = (p) => p.y > 0.5; dir = -1; }
+    else if (face === 'D') { axis = 'y'; condition = (p) => p.y < -0.5; dir = 1; }
+    else if (face === 'F') { axis = 'z'; condition = (p) => p.z > 0.5; dir = -1; }
+    else if (face === 'B') { axis = 'z'; condition = (p) => p.z < -0.5; dir = 1; }
+    else if (face === 'M') { axis = 'x'; condition = (p) => Math.abs(p.x) < 0.5; dir = 1; }
+
+    if (!axis) {
+        window.updateCubeColors(targetFaceletString);
+        return;
+    }
+
+    let angle = Math.PI / 2;
+    if (modifier === "'") angle *= -1;
+    if (modifier === "2") angle *= 2;
+
+    const targetAngle = angle * dir;
+    
+    const pivot = new THREE.Group();
+    scene.add(pivot);
+    
+    const activeCubies = [];
+    Object.values(cubies).forEach(mesh => {
+        if (condition(mesh.position)) {
+            activeCubies.push(mesh);
+        }
+    });
+
+    // Reparent to pivot without changing world position
+    activeCubies.forEach(mesh => {
+        cubeGroup.remove(mesh);
+        pivot.add(mesh);
+    });
+
+    isAnimating = true;
+    let currentAngle = 0;
+    const steps = 12; // animation frames
+    const speed = targetAngle / steps;
+
+    function animateFrame() {
+        if (Math.abs(currentAngle) < Math.abs(targetAngle)) {
+            currentAngle += speed;
+            if (Math.abs(currentAngle) > Math.abs(targetAngle)) currentAngle = targetAngle; // clamp
+            pivot.rotation[axis] = currentAngle;
+            requestAnimationFrame(animateFrame);
+        } else {
+            // Animation complete
+            pivot.rotation[axis] = 0;
+            activeCubies.forEach(mesh => {
+                pivot.remove(mesh);
+                cubeGroup.add(mesh);
+            });
+            scene.remove(pivot);
+            window.updateCubeColors(targetFaceletString);
+            isAnimating = false;
+        }
+    }
+    
+    animateFrame();
+};

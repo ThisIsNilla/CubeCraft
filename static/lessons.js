@@ -78,33 +78,43 @@ window.LESSONS_DATA = {
                 <div class="space-y-4 text-slate-700">
                     <p>F2L is the most important step in CFOP. Instead of solving the white corners first and then the middle edges, you find a corner and its matching edge, pair them up in the top layer, and insert them into their slot simultaneously.</p>
                     
-                    <p>There are 41 basic F2L cases, but they all boil down to three main intuitive scenarios:</p>
-
                     <h4 class="font-bold text-slate-900 mt-6">Case 1: Different Colors on Top</h4>
                     <div class="flex flex-col md:flex-row items-center gap-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <img src="https://visualcube.api.cubing.net/?fmt=svg&bg=t&size=120&pzl=3&stage=f2l&case=R U R'" alt="F2L Insertion" class="shrink-0" />
-                        <div>
+                        <div class="w-full">
                             <p class="text-sm mb-2">When the corner and edge are separated in the top layer and have different colors facing up, bring them together by hiding the corner, moving the edge over it, and bringing the corner back up.</p>
-                                                        <p class="font-code-mono font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded inline-block border border-blue-200">R U R'</p>
-                            <button onclick="startGuidedScenario('R U\\' R\\'', ['R', 'U', 'R\\''], 'F2L: Different Colors')" class="mt-4 w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-colors flex items-center justify-center gap-2 shadow-sm"><span class="material-symbols-outlined text-[16px]">play_arrow</span> Practice on 3D Cube</button>
+                            <p class="font-code-mono font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded inline-block border border-blue-200">R U R'</p>
+                            <div class="mt-4 p-3 bg-white rounded-xl border border-slate-200 shadow-sm">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Setup Scramble (For Physical Cube)</p>
+                                <p class="font-code-mono text-xs font-bold text-slate-800 tracking-widest">R U' R'</p>
+                            </div>
+                            <button onclick="startGuidedScenario('R U\\' R\\'', ['R', 'U', 'R\\''], 'F2L: Different Colors')" class="mt-2 w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-colors flex items-center justify-center gap-2 shadow-sm"><span class="material-symbols-outlined text-[16px]">play_arrow</span> Practice on 3D Cube</button>
                         </div>
                     </div>
 
                     <h4 class="font-bold text-slate-900 mt-6">Case 2: Same Colors on Top</h4>
                     <div class="flex flex-col md:flex-row items-center gap-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <img src="https://visualcube.api.cubing.net/?fmt=svg&bg=t&size=120&pzl=3&stage=f2l&case=R U' R' U2 y' R' U' R" alt="F2L Same Color" class="shrink-0" />
-                        <div>
-                                                        <p class="text-sm mb-2">If the top colors match, hide the corner in a safe slot, move the edge so it's directly opposite the corner, and bring the corner back up. They will form a connected block that you can insert.</p>
-                            <button onclick="startGuidedScenario('R U R\\' U2 R U\\' R\\' U', ['U\\'', 'R', 'U', 'R\\'', 'U2', 'R', 'U\\'', 'R\\''], 'F2L: Same Colors')" class="mt-4 w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-colors flex items-center justify-center gap-2 shadow-sm"><span class="material-symbols-outlined text-[16px]">play_arrow</span> Practice on 3D Cube</button>
+                        <div class="w-full">
+                            <p class="text-sm mb-2">If the top colors match, hide the corner in a safe slot, move the edge so it's directly opposite the corner, and bring the corner back up. They will form a connected block that you can insert.</p>
+                            <div class="mt-4 p-3 bg-white rounded-xl border border-slate-200 shadow-sm">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Setup Scramble (For Physical Cube)</p>
+                                <p class="font-code-mono text-xs font-bold text-slate-800 tracking-widest">R U R' U2 R U' R' U</p>
+                            </div>
+                            <button onclick="startGuidedScenario('R U R\\' U2 R U\\' R\\' U', ['U\\'', 'R', 'U', 'R\\'', 'U2', 'R', 'U\\'', 'R\\''], 'F2L: Same Colors')" class="mt-2 w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-colors flex items-center justify-center gap-2 shadow-sm"><span class="material-symbols-outlined text-[16px]">play_arrow</span> Practice on 3D Cube</button>
                         </div>
                     </div>
 
                     <h4 class="font-bold text-slate-900 mt-6">Case 3: White Facing Up</h4>
                     <div class="flex flex-col md:flex-row items-center gap-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <img src="https://visualcube.api.cubing.net/?fmt=svg&bg=t&size=120&pzl=3&stage=f2l&case=R U2 R' U' R U R'" alt="F2L White Up" class="shrink-0" />
-                        <div>
-                                                        <p class="text-sm mb-2">Move the edge piece so its side color matches its center piece. Then perform a face rotation away from the edge to hide it, move the top corner over it, and bring it back up.</p>
-                            <button onclick="startGuidedScenario('R U\\' R\\' U R U\\' R\\'', ['R', 'U', 'R\\'', 'U\\'', 'R', 'U', 'R\\''], 'F2L: White Facing Up')" class="mt-4 w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-colors flex items-center justify-center gap-2 shadow-sm"><span class="material-symbols-outlined text-[16px]">play_arrow</span> Practice on 3D Cube</button>
+                        <div class="w-full">
+                            <p class="text-sm mb-2">Move the edge piece so its side color matches its center piece. Then perform a face rotation away from the edge to hide it, move the top corner over it, and bring it back up.</p>
+                            <div class="mt-4 p-3 bg-white rounded-xl border border-slate-200 shadow-sm">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Setup Scramble (For Physical Cube)</p>
+                                <p class="font-code-mono text-xs font-bold text-slate-800 tracking-widest">R U' R' U R U' R'</p>
+                            </div>
+                            <button onclick="startGuidedScenario('R U\\' R\\' U R U\\' R\\'', ['R', 'U', 'R\\'', 'U\\'', 'R', 'U', 'R\\''], 'F2L: White Facing Up')" class="mt-2 w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-colors flex items-center justify-center gap-2 shadow-sm"><span class="material-symbols-outlined text-[16px]">play_arrow</span> Practice on 3D Cube</button>
                         </div>
                     </div>
                 </div>
@@ -127,20 +137,15 @@ window.LESSONS_DATA = {
 
                     <div class="flex flex-col md:flex-row items-center gap-6 bg-slate-50 p-4 rounded-xl border border-slate-200 mt-4">
                         <img src="https://visualcube.api.cubing.net/?fmt=svg&bg=t&size=120&pzl=3&view=plan&stage=oll&case=R U R' U R U2 R'" alt="OLL Sune" class="shrink-0" />
-                        <div>
+                        <div class="w-full">
                             <p class="font-bold mb-1">The "Sune" (One corner up)</p>
                             <p class="text-sm mb-2">Hold the single yellow corner in the bottom-left of the U face.</p>
-                                                        <p class="font-code-mono font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded inline-block border border-blue-200">R U R' U R U2 R'</p>
-                            <button onclick="startGuidedScenario('R U2 R\\' U\\' R U\\' R\\'', ['R', 'U', 'R\\'', 'U', 'R', 'U2', 'R\\''], 'OLL: The Sune')" class="mt-4 w-full py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs transition-colors flex items-center justify-center gap-2 shadow-sm"><span class="material-symbols-outlined text-[16px]">play_arrow</span> Practice on 3D Cube</button>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col md:flex-row items-center gap-6 bg-slate-50 p-4 rounded-xl border border-slate-200 mt-4">
-                        <img src="https://visualcube.api.cubing.net/?fmt=svg&bg=t&size=120&pzl=3&view=plan&stage=oll&case=R U2 R' U' R U' R'" alt="OLL Anti-Sune" class="shrink-0" />
-                        <div>
-                            <p class="font-bold mb-1">The "Anti-Sune"</p>
-                            <p class="text-sm mb-2">Like Sune, but the yellow sticker on the right face is near the front.</p>
-                            <p class="font-code-mono font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded inline-block border border-blue-200">R U2 R' U' R U' R'</p>
+                            <p class="font-code-mono font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded inline-block border border-blue-200">R U R' U R U2 R'</p>
+                            <div class="mt-4 p-3 bg-white rounded-xl border border-slate-200 shadow-sm">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Setup Scramble (For Physical Cube)</p>
+                                <p class="font-code-mono text-xs font-bold text-slate-800 tracking-widest">R U2 R' U' R U' R'</p>
+                            </div>
+                            <button onclick="startGuidedScenario('R U2 R\\' U\\' R U\\' R\\'', ['R', 'U', 'R\\'', 'U', 'R', 'U2', 'R\\''], 'OLL: The Sune')" class="mt-2 w-full py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs transition-colors flex items-center justify-center gap-2 shadow-sm"><span class="material-symbols-outlined text-[16px]">play_arrow</span> Practice on 3D Cube</button>
                         </div>
                     </div>
                 </div>
@@ -160,23 +165,15 @@ window.LESSONS_DATA = {
 
                     <div class="flex flex-col md:flex-row items-center gap-6 bg-slate-50 p-4 rounded-xl border border-slate-200 mt-4">
                         <img src="https://visualcube.api.cubing.net/?fmt=svg&bg=t&size=120&pzl=3&view=plan&stage=pll&case=R U R' U' R' F R2 U' R' U' R U R' F'" alt="PLL T-Perm" class="shrink-0" />
-                        <div>
+                        <div class="w-full">
                             <p class="font-bold mb-1">The T-Perm</p>
                             <p class="text-sm mb-2">If you have headlights on the back, the T-perm will swap the front-right and front-left corners to solve all corners.</p>
-                                                        <p class="font-code-mono font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded inline-block border border-blue-200 break-words">R U R' U' R' F R2 U' R' U' R U R' F'</p>
-                            <button onclick="startGuidedScenario('F R U\\' R\\' U R U R2 F\\' R U R U\\' R\\'', ['R', 'U', 'R\\'', 'U\\'', 'R\\'', 'F', 'R2', 'U\\'', 'R\\'', 'U\\'', 'R', 'U', 'R\\'', 'F\\''], 'PLL: T-Perm')" class="mt-4 w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-colors flex items-center justify-center gap-2 shadow-sm"><span class="material-symbols-outlined text-[16px]">play_arrow</span> Practice on 3D Cube</button>
-                        </div>
-                    </div>
-
-                    <h4 class="font-bold text-slate-900 mt-6">Step 2: Permute the Edges</h4>
-                    <p>Now the corners are solved, you just need to cycle 3 edges to finish the cube!</p>
-
-                    <div class="flex flex-col md:flex-row items-center gap-6 bg-slate-50 p-4 rounded-xl border border-slate-200 mt-4">
-                        <img src="https://visualcube.api.cubing.net/?fmt=svg&bg=t&size=120&pzl=3&view=plan&stage=pll&case=M2 U M U2 M' U M2" alt="PLL Ua-Perm" class="shrink-0" />
-                        <div>
-                            <p class="font-bold mb-1">The Ua-Perm (Clockwise)</p>
-                            <p class="text-sm mb-2">Put the fully solved bar in the back. This algorithm cycles the front, left, and right edges clockwise.</p>
-                            <p class="font-code-mono font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded inline-block border border-blue-200 break-words">M2 U M U2 M' U M2</p>
+                            <p class="font-code-mono font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded inline-block border border-blue-200 break-words">R U R' U' R' F R2 U' R' U' R U R' F'</p>
+                            <div class="mt-4 p-3 bg-white rounded-xl border border-slate-200 shadow-sm">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Setup Scramble (For Physical Cube)</p>
+                                <p class="font-code-mono text-xs font-bold text-slate-800 tracking-widest">F R U' R' U R U R2 F' R U R U' R'</p>
+                            </div>
+                            <button onclick="startGuidedScenario('F R U\\' R\\' U R U R2 F\\' R U R U\\' R\\'', ['R', 'U', 'R\\'', 'U\\'', 'R\\'', 'F', 'R2', 'U\\'', 'R\\'', 'U\\'', 'R', 'U', 'R\\'', 'F\\''], 'PLL: T-Perm')" class="mt-2 w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-colors flex items-center justify-center gap-2 shadow-sm"><span class="material-symbols-outlined text-[16px]">play_arrow</span> Practice on 3D Cube</button>
                         </div>
                     </div>
                 </div>
@@ -184,4 +181,3 @@ window.LESSONS_DATA = {
         }
     ]
 };
-

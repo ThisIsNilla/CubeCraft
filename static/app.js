@@ -15,7 +15,7 @@ async function initSession() {
         const data = await response.json();
         currentSessionId = data.session_id;
         console.log("Session initialized. ID:", currentSessionId);
-        updateUI(data);
+        updateUI(data, null);
     } catch (error) {
         console.error("Failed to init session", error);
     }
@@ -58,7 +58,7 @@ async function executeNotation(move) {
             body: JSON.stringify({ sequence: move })
         });
         const data = await response.json();
-        updateUI(data);
+        updateUI(data, move);
     } catch (error) {
         console.error("Failed to execute move", error);
     }
@@ -102,7 +102,7 @@ window.scrambleCube = async function() {
             body: JSON.stringify({ sequence: sequence })
         });
         const data = await response.json();
-        updateUI(data);
+        updateUI(data, sequence);
         
         const badge = document.getElementById("lastExecutedMove");
         if (badge) badge.innerText = "SCRAMBLED";
@@ -186,7 +186,7 @@ window.closeLessonModal = function() {
     document.getElementById("lessonModal").classList.add("hidden");
 };
 
-function updateUI(data) {
+function updateUI(data, lastMove) {
     if (!data) return;
     
     // Update labels
@@ -207,9 +207,7 @@ function updateUI(data) {
     if (progressBar) progressBar.style.width = Math.round(data.progress_percentage) + "%";
 
     // Update 3D Cube
-    if (window.updateCubeColors && data.facelet_string) {
-        window.updateCubeColors(data.facelet_string);
-    }
+    if (window.animateCubeMove && data.facelet_string) { window.animateCubeMove(lastMove, data.facelet_string); } else if (window.updateCubeColors && data.facelet_string) { window.updateCubeColors(data.facelet_string); }
     
     // Update Quest Track UI
     renderQuestTrack(data.current_step);
@@ -265,4 +263,7 @@ window.exitTutorMode = function() {
     window.activeTutorial = null;
     document.getElementById('tutorHud').classList.add('hidden');
 };
+
+
+
 
