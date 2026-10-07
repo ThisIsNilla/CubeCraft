@@ -22,6 +22,23 @@ async function initSession() {
 }
 
 async function executeNotation(move) {
+    if (window.activeTutorial) {
+        const expected = window.activeTutorial.solution[window.activeTutorial.currentIndex];
+        if (move !== expected) {
+            const nextMoveEl = document.getElementById('tutorNextMove');
+            nextMoveEl.classList.replace('text-amber-400', 'text-red-400');
+            setTimeout(() => {
+                if (window.activeTutorial) {
+                    nextMoveEl.classList.replace('text-red-400', 'text-amber-400');
+                }
+            }, 500);
+            return; // Block wrong moves
+        } else {
+            window.activeTutorial.currentIndex++;
+            updateTutorUI();
+        }
+    }
+
     if (!currentSessionId) return;
 
     // Update toast UI
@@ -201,4 +218,51 @@ function updateUI(data) {
 window.addEventListener('DOMContentLoaded', initSession);
 
 
+
+
+window.activeTutorial = null;
+
+window.startGuidedScenario = async function(setupScramble, solutionMoves, title) {
+    if (window.closeLessonModal) window.closeLessonModal();
+    // Reset session and apply setup
+    await initSession();
+    await fetch('/api/sessions/' + currentSessionId + '/moves', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ sequence: setupScramble })
+    });
+    
+    window.activeTutorial = {
+        title: title,
+        solution: solutionMoves,
+        currentIndex: 0
+    };
+    
+    document.getElementById('tutorHud').classList.remove('hidden');
+    document.getElementById('tutorTitle').innerText = title;
+    updateTutorUI();
+};
+
+function updateTutorUI() {
+    if (!window.activeTutorial) return;
+    const tut = window.activeTutorial;
+    const nextMoveEl = document.getElementById('tutorNextMove');
+    if (tut.currentIndex >= tut.solution.length) {
+        nextMoveEl.innerText = "DONE!";
+        nextMoveEl.classList.replace('text-amber-400', 'text-emerald-400');
+        setTimeout(() => exitTutorMode(), 3000);
+        return;
+    }
+    nextMoveEl.innerText = tut.solution[tut.currentIndex];
+    if (nextMoveEl.classList.contains('text-emerald-400')) {
+        nextMoveEl.classList.replace('text-emerald-400', 'text-amber-400');
+    }
+    if (nextMoveEl.classList.contains('text-red-400')) {
+        nextMoveEl.classList.replace('text-red-400', 'text-amber-400');
+    }
+}
+
+window.exitTutorMode = function() {
+    window.activeTutorial = null;
+    document.getElementById('tutorHud').classList.add('hidden');
+};
 
