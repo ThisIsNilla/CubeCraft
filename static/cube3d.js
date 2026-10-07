@@ -9,6 +9,7 @@ const FACE_COLORS = {
 };
 
 let scene, camera, renderer, cubeGroup;
+let cubies = {}; // Maps 'x,y,z' to the THREE.Mesh
 
 function init3DCube() {
   const container = document.getElementById('cube3d-container');
@@ -58,21 +59,18 @@ function init3DCube() {
 
 function createInitialCube() {
   const geometry = new THREE.BoxGeometry(0.95, 0.95, 0.95);
-  const offset = 1.0; // Distance between cubies
+  const offset = 1.0; 
 
-  // Standard Solved Mapping (Up=White, Right=Red, Front=Green, Down=Yellow, Left=Orange, Back=Blue)
-  // ThreeJS Material Order: Right(x+), Left(x-), Top(y+), Bottom(y-), Front(z+), Back(z-)
-  
   for (let x = -1; x <= 1; x++) {
     for (let y = -1; y <= 1; y++) {
       for (let z = -1; z <= 1; z++) {
         const materials = [
-          new THREE.MeshLambertMaterial({ color: x === 1 ? FACE_COLORS.R : FACE_COLORS.INTERNAL }),  // Right
-          new THREE.MeshLambertMaterial({ color: x === -1 ? FACE_COLORS.L : FACE_COLORS.INTERNAL }), // Left
-          new THREE.MeshLambertMaterial({ color: y === 1 ? FACE_COLORS.U : FACE_COLORS.INTERNAL }),  // Top
-          new THREE.MeshLambertMaterial({ color: y === -1 ? FACE_COLORS.D : FACE_COLORS.INTERNAL }), // Bottom
-          new THREE.MeshLambertMaterial({ color: z === 1 ? FACE_COLORS.F : FACE_COLORS.INTERNAL }),  // Front
-          new THREE.MeshLambertMaterial({ color: z === -1 ? FACE_COLORS.B : FACE_COLORS.INTERNAL })  // Back
+          new THREE.MeshLambertMaterial({ color: x === 1 ? FACE_COLORS.R : FACE_COLORS.INTERNAL }),  // 0: Right (x+)
+          new THREE.MeshLambertMaterial({ color: x === -1 ? FACE_COLORS.L : FACE_COLORS.INTERNAL }), // 1: Left (x-)
+          new THREE.MeshLambertMaterial({ color: y === 1 ? FACE_COLORS.U : FACE_COLORS.INTERNAL }),  // 2: Top (y+)
+          new THREE.MeshLambertMaterial({ color: y === -1 ? FACE_COLORS.D : FACE_COLORS.INTERNAL }), // 3: Bottom (y-)
+          new THREE.MeshLambertMaterial({ color: z === 1 ? FACE_COLORS.F : FACE_COLORS.INTERNAL }),  // 4: Front (z+)
+          new THREE.MeshLambertMaterial({ color: z === -1 ? FACE_COLORS.B : FACE_COLORS.INTERNAL })  // 5: Back (z-)
         ];
 
         const mesh = new THREE.Mesh(geometry, materials);
@@ -84,6 +82,7 @@ function createInitialCube() {
         mesh.add(line);
 
         cubeGroup.add(mesh);
+        cubies[`${x},${y},${z}`] = mesh;
       }
     }
   }
@@ -92,6 +91,49 @@ function createInitialCube() {
 window.resetCubeRotation = function() {
     if (cubeGroup) {
         cubeGroup.rotation.set(0, 0, 0);
+    }
+};
+
+window.updateCubeColors = function(faceletString) {
+    if (!faceletString || faceletString.length !== 54) return;
+
+    // Facelet Mapping definition
+    const FACELET_MAP = [
+        // U0..U8 (y=1, top-left to bottom-right looking at top face)
+        {p:[-1, 1, -1], f:2}, {p:[0, 1, -1], f:2}, {p:[1, 1, -1], f:2},
+        {p:[-1, 1,  0], f:2}, {p:[0, 1,  0], f:2}, {p:[1, 1,  0], f:2},
+        {p:[-1, 1,  1], f:2}, {p:[0, 1,  1], f:2}, {p:[1, 1,  1], f:2},
+        // R0..R8 (x=1, top-left to bottom-right looking at right face)
+        {p:[1, 1,  1], f:0}, {p:[1, 1,  0], f:0}, {p:[1, 1, -1], f:0},
+        {p:[1, 0,  1], f:0}, {p:[1, 0,  0], f:0}, {p:[1, 0, -1], f:0},
+        {p:[1, -1, 1], f:0}, {p:[1, -1, 0], f:0}, {p:[1, -1,-1], f:0},
+        // F0..F8 (z=1, top-left to bottom-right looking at front face)
+        {p:[-1, 1, 1], f:4}, {p:[0, 1, 1], f:4}, {p:[1, 1, 1], f:4},
+        {p:[-1, 0, 1], f:4}, {p:[0, 0, 1], f:4}, {p:[1, 0, 1], f:4},
+        {p:[-1,-1, 1], f:4}, {p:[0,-1, 1], f:4}, {p:[1,-1, 1], f:4},
+        // D0..D8 (y=-1, top-left to bottom-right looking at down face)
+        {p:[-1,-1, 1], f:3}, {p:[0,-1, 1], f:3}, {p:[1,-1, 1], f:3},
+        {p:[-1,-1, 0], f:3}, {p:[0,-1, 0], f:3}, {p:[1,-1, 0], f:3},
+        {p:[-1,-1,-1], f:3}, {p:[0,-1,-1], f:3}, {p:[1,-1,-1], f:3},
+        // L0..L8 (x=-1, top-left to bottom-right looking at left face)
+        {p:[-1, 1,-1], f:1}, {p:[-1, 1, 0], f:1}, {p:[-1, 1, 1], f:1},
+        {p:[-1, 0,-1], f:1}, {p:[-1, 0, 0], f:1}, {p:[-1, 0, 1], f:1},
+        {p:[-1,-1,-1], f:1}, {p:[-1,-1, 0], f:1}, {p:[-1,-1, 1], f:1},
+        // B0..B8 (z=-1, top-left to bottom-right looking at back face)
+        {p:[1, 1,-1], f:5}, {p:[0, 1,-1], f:5}, {p:[-1, 1,-1], f:5},
+        {p:[1, 0,-1], f:5}, {p:[0, 0,-1], f:5}, {p:[-1, 0,-1], f:5},
+        {p:[1,-1,-1], f:5}, {p:[0,-1,-1], f:5}, {p:[-1,-1,-1], f:5},
+    ];
+
+    for (let i = 0; i < 54; i++) {
+        const mapping = FACELET_MAP[i];
+        const key = `${mapping.p[0]},${mapping.p[1]},${mapping.p[2]}`;
+        const char = faceletString[i];
+        
+        const mesh = cubies[key];
+        if (mesh && FACE_COLORS[char] !== undefined) {
+            mesh.material[mapping.f].color.setHex(FACE_COLORS[char]);
+        }
     }
 };
 

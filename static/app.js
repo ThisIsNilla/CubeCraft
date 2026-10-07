@@ -2,7 +2,13 @@ let currentSessionId = null;
 
 async function initSession() {
     try {
-        const response = await fetch('/api/sessions', { method: 'POST' });
+        const activeMethod = localStorage.getItem('activeMethod') || 'cfop';
+        
+        const response = await fetch('/api/sessions', { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ method: activeMethod })
+        });
         const data = await response.json();
         currentSessionId = data.session_id;
         updateUI(data);
@@ -28,7 +34,7 @@ async function executeNotation(move) {
         const response = await fetch(`/api/sessions/${currentSessionId}/moves`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ moves: move })
+            body: JSON.stringify({ sequence: move })
         });
         const data = await response.json();
         updateUI(data);
@@ -42,7 +48,7 @@ window.executeNotation = executeNotation;
 
 window.scrambleCube = async function() {
     if (!currentSessionId) return;
-    const moves = ["R", "U", "R'", "U'", "F", "B", "L", "D", "R2", "U2", "F2", "D2", "L2", "B2"];
+    const moves = ["R", "U", "F", "B", "L", "D", "R'", "U'", "F'", "B'", "L'", "D'", "R2", "U2", "F2", "B2", "L2", "D2"];
     let scramble = [];
     for(let i=0; i<20; i++) {
         scramble.push(moves[Math.floor(Math.random() * moves.length)]);
@@ -52,7 +58,7 @@ window.scrambleCube = async function() {
         const response = await fetch(`/api/sessions/${currentSessionId}/moves`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ moves: scramble.join(" ") })
+            body: JSON.stringify({ sequence: scramble.join(" ") })
         });
         const data = await response.json();
         updateUI(data);
@@ -73,23 +79,36 @@ window.requestHint = async function() {
         const hintData = await response.json();
         
         // Temporarily show hint in the description
-        document.getElementById("stepDescription").innerHTML = `<strong>💡 Hint:</strong> Try the move <span class="text-blue-600 font-code-mono font-bold">${hintData.optimal_moves[0] || 'Already solved'}</span>`;
+        document.getElementById("stepDescription").innerHTML = `<strong>💡 Hint:</strong> Try the sequence <span class="text-blue-600 font-code-mono font-bold">${hintData.hint.join(' ')}</span>`;
     } catch (e) {
         console.error(e);
     }
 }
 
 function updateUI(data) {
-    if (!data.instructions) return;
+    if (!data) return;
     
-    const { method, step_name, description } = data.instructions;
+    // Update labels
+    const methodBadge = document.getElementById("methodBadge");
+    if (methodBadge) methodBadge.innerText = data.method.toUpperCase();
     
-    document.getElementById("methodBadge").innerText = method;
-    document.getElementById("stepTitle").innerText = step_name;
-    document.getElementById("stepDescription").innerText = description || "Keep going! Follow the algorithms for this step.";
+    const stepTitle = document.getElementById("stepTitle");
+    if (stepTitle) stepTitle.innerText = data.current_step;
     
-    // For the UI preview, we don't fully update the 3D cube colors yet, 
-    // but the backend integration is live!
+    const stepDescription = document.getElementById("stepDescription");
+    if (stepDescription) stepDescription.innerText = data.instructions || "Keep going! Follow the algorithms for this step.";
+
+    // Update Progress
+    const progressPercentage = document.getElementById("progressPercentage");
+    if (progressPercentage) progressPercentage.innerText = Math.round(data.progress_percentage) + "%";
+    
+    const progressBar = document.getElementById("progressBar");
+    if (progressBar) progressBar.style.width = Math.round(data.progress_percentage) + "%";
+
+    // Update 3D Cube
+    if (window.updateCubeColors && data.facelet_string) {
+        window.updateCubeColors(data.facelet_string);
+    }
 }
 
 window.addEventListener('DOMContentLoaded', initSession);

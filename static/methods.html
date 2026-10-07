@@ -77,7 +77,7 @@
         <div><h2 class="font-bold text-slate-800 text-lg">Beginner Method</h2><span class="text-xs text-slate-500 font-medium">Layer-by-Layer</span></div>
       </div>
       <p class="text-sm text-slate-600 mb-4">The easiest way to solve the cube. Learn the basics of edge and corner insertion without heavy memorization.</p>
-      <button class="px-4 py-2 w-full rounded-xl bg-slate-100 text-slate-700 font-bold text-sm hover:bg-slate-200 transition-colors">Select Beginner</button>
+      <button onclick="setMethod('beginner')" class="px-4 py-2 w-full rounded-xl bg-slate-100 text-slate-700 font-bold text-sm hover:bg-slate-200 transition-colors">Select Beginner</button>
     </div>
 
     <!-- CFOP -->
@@ -88,7 +88,7 @@
         <div><h2 class="font-bold text-slate-800 text-lg">CFOP (Fridrich)</h2><span class="text-xs text-slate-500 font-medium">Cross, F2L, OLL, PLL</span></div>
       </div>
       <p class="text-sm text-slate-600 mb-4">The most popular speedcubing method. Optimize your solves with advanced algorithms and lookahead.</p>
-      <button class="px-4 py-2 w-full rounded-xl bg-blue-600 text-white font-bold text-sm hover:bg-blue-700 transition-colors">Currently Active</button>
+      <button onclick="setMethod('cfop')" class="px-4 py-2 w-full rounded-xl bg-blue-600 text-white font-bold text-sm hover:bg-blue-700 transition-colors">Select CFOP</button>
     </div>
 
     <!-- Roux -->
@@ -98,7 +98,7 @@
         <div><h2 class="font-bold text-slate-800 text-lg">Roux Method</h2><span class="text-xs text-slate-500 font-medium">Blockbuilding</span></div>
       </div>
       <p class="text-sm text-slate-600 mb-4">A highly efficient, low-movecount method that relies heavily on M-slices and intuition instead of raw algorithms.</p>
-      <button class="px-4 py-2 w-full rounded-xl bg-slate-100 text-slate-700 font-bold text-sm hover:bg-slate-200 transition-colors">Select Roux</button>
+      <button onclick="setMethod('roux')" class="px-4 py-2 w-full rounded-xl bg-slate-100 text-slate-700 font-bold text-sm hover:bg-slate-200 transition-colors">Select Roux</button>
     </div>
 
     <!-- ZZ -->
@@ -108,9 +108,22 @@
         <div><h2 class="font-bold text-slate-800 text-lg">ZZ Method</h2><span class="text-xs text-slate-500 font-medium">EOLine & Blockbuilding</span></div>
       </div>
       <p class="text-sm text-slate-600 mb-4">Focuses on Edge Orientation first, making the rest of the solve completely rotationless. Highly ergonomic.</p>
-      <button class="px-4 py-2 w-full rounded-xl bg-slate-100 text-slate-700 font-bold text-sm hover:bg-slate-200 transition-colors">Select ZZ</button>
+      <button onclick="setMethod('zz')" class="px-4 py-2 w-full rounded-xl bg-slate-100 text-slate-700 font-bold text-sm hover:bg-slate-200 transition-colors">Select ZZ</button>
     </div>
   </div>
 </div>
-</main><!-- Clean Educational Footer -->
+</main>
+<script>
+  function setMethod(method) {
+    localStorage.setItem('activeMethod', method);
+    window.location.href = '/static/index.html';
+  }
+
+  // Update UI based on current active method
+  document.addEventListener('DOMContentLoaded', () => {
+    const activeMethod = localStorage.getItem('activeMethod') || 'cfop';
+    // The UI could be updated to show which is currently active, but for now we just let the user click
+  });
+</script><!-- Clean Educational Footer -->
+
 
