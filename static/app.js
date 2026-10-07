@@ -178,7 +178,7 @@ function loadLesson(moduleIdx, lessonIdx) {
     }
     
     // Navigation
-    document.getElementById("lessonProgressIndicator").innerText = \`\${lessonIdx + 1} / \${mod.lessons.length}\`;
+    document.getElementById("lessonProgressIndicator").innerText = `${lessonIdx + 1} / ${mod.lessons.length}`;
     
     const btnPrev = document.getElementById("btnPrevLesson");
     if (lessonIdx > 0) {
