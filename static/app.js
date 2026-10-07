@@ -1,14 +1,16 @@
+let currentActiveMethod = 'cfop';
+
 let currentSessionId = null;
 
 async function initSession() {
     try {
-        const activeMethod = localStorage.getItem('activeMethod') || 'cfop';
-        console.log("Initializing session with method:", activeMethod);
+        currentActiveMethod = localStorage.getItem('activeMethod') || 'cfop';
+        console.log("Initializing session with method:", currentActiveMethod);
         
         const response = await fetch('/api/sessions', { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ method: activeMethod })
+            body: JSON.stringify({ method: currentActiveMethod })
         });
         const data = await response.json();
         currentSessionId = data.session_id;
@@ -114,6 +116,59 @@ window.requestHint = async function() {
     }
 }
 
+
+
+function renderQuestTrack(currentStep) {
+    const container = document.getElementById("questTrackContainer");
+    if (!container || !window.LESSONS_DATA) return;
+    
+    const lessons = window.LESSONS_DATA[currentActiveMethod];
+    if (!lessons) return;
+    
+    document.getElementById("questStageCount").innerText = `0/${lessons.length}`;
+    container.innerHTML = '';
+    
+    lessons.forEach((lesson, index) => {
+        // Basic match: if the current API step title contains the lesson title (e.g. "White Cross" in "Stage 1: White Cross")
+        const isCurrent = lesson.title.toLowerCase().includes(currentStep.toLowerCase()) || currentStep.toLowerCase().includes(lesson.title.toLowerCase().replace(/stage \d+: /g, ''));
+        
+        const card = document.createElement('div');
+        card.className = `p-3 rounded-2xl border ${isCurrent ? 'border-blue-600 bg-blue-50/60 shadow-xs ring-1 ring-blue-600' : 'border-slate-200 bg-white hover:bg-slate-50'} transition-colors flex items-center justify-between cursor-pointer group`;
+        card.onclick = () => openLessonModal(currentActiveMethod, index);
+        
+        card.innerHTML = `
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full ${isCurrent ? 'bg-blue-600 text-white shadow-xs ring-4 ring-blue-100' : 'bg-slate-100 text-slate-500 border border-slate-200 group-hover:bg-blue-50 group-hover:text-blue-600 group-hover:border-blue-200'} flex items-center justify-center text-xs font-black">
+                    ${index + 1}
+                </div>
+                <div>
+                    <div class="flex items-center gap-1.5">
+                        <h4 class="text-xs ${isCurrent ? 'font-black text-blue-900' : 'font-bold text-slate-800'}">${lesson.title}</h4>
+                        ${isCurrent ? '<span class="text-[10px] text-amber-700 font-bold bg-amber-100 px-1.5 rounded">In Progress</span>' : ''}
+                    </div>
+                    <p class="text-[11px] ${isCurrent ? 'text-blue-700 font-semibold' : 'text-slate-500 font-medium'}">${lesson.description}</p>
+                </div>
+            </div>
+            ${isCurrent ? '<span class="text-[10px] font-black uppercase text-blue-700 px-2.5 py-1 rounded-full bg-white border border-blue-200 shadow-2xs">LEARN</span>' : '<span class="material-symbols-outlined text-slate-400 text-[18px]">chevron_right</span>'}
+        `;
+        container.appendChild(card);
+    });
+}
+
+window.openLessonModal = function(method, index) {
+    const lesson = window.LESSONS_DATA[method][index];
+    if (!lesson) return;
+    
+    document.getElementById("lessonModalTitle").innerText = lesson.title;
+    document.getElementById("lessonModalContent").innerHTML = lesson.htmlContent;
+    
+    document.getElementById("lessonModal").classList.remove("hidden");
+};
+
+window.closeLessonModal = function() {
+    document.getElementById("lessonModal").classList.add("hidden");
+};
+
 function updateUI(data) {
     if (!data) return;
     
@@ -138,6 +193,12 @@ function updateUI(data) {
     if (window.updateCubeColors && data.facelet_string) {
         window.updateCubeColors(data.facelet_string);
     }
+    
+    // Update Quest Track UI
+    renderQuestTrack(data.current_step);
 }
 
 window.addEventListener('DOMContentLoaded', initSession);
+
+
+
